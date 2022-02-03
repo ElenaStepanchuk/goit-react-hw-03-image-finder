@@ -31,6 +31,9 @@ export default class App extends Component {
         .catch((error) => this.setState({ error }))
         .finally(() => this.setState({ loading: false }));
     }
+    // if (this.state.photos.hits.total === 0) {
+    //   return <h2>Картинок с таким именем нет</h2>;
+    // }
   }
   handleFormSubmit = (name) => {
     this.setState({ name });
@@ -39,11 +42,27 @@ export default class App extends Component {
     this.setState((prevState) => {
       return { page: prevState.page + 1 };
     });
+    fetch(
+      `https://pixabay.com/api/?q=${this.state.name}&page=${
+        this.state.page + 1
+      }&key=24384103-764a450d164e25b7c6f60e4ce&image_type=photo&orientation=horizontal&per_page=12`
+    )
+      .then((response) => {
+        return response.json();
+      })
+      // .then((photos) =>
+      //   this.setState((prevState) => {
+      //     return { photos: [...prevState.photos, photos] };
+      //   })
+      // )
+      .then((photos) => this.setState({ photos }))
+      .catch((error) => this.setState({ error }))
+      .finally(() => this.setState({ loading: false }));
   };
 
   render() {
-    // console.log(this.state.page);
-    // const { imagePhoto, page, error, status } = this.state;
+    console.log(this.state.page);
+    // const { photos, page, status } = this.state;
     const { photos, page, loading, error } = this.state;
     return (
       <div className={css.app}>
@@ -77,15 +96,21 @@ export default class App extends Component {
     //   return <h2>Загружаем...</h2>;
     // }
     // if (status === "rejected") {
-    //   return <h2>{error.message}</h2>;
+    //   return <h2>Картинок с таким именем нет</h2>;
     // }
     // if (status === "resolved") {
     //   return (
     //     <div className={css.gallery}>
     //       <ImageGallery>
-    //         <ImageGalleryItem renderPhotos={imagePhoto} />
+    //         <ImageGalleryItem renderPhotos={photos} />
     //       </ImageGallery>
-    //       <Button page={page} onChange={this.handleChangePage} />
+    //       {photos && (
+    //         <Button
+    //           page={page}
+    //           onChange={this.handleChangePage}
+    //           photos={photos}
+    //         />
+    //       )}
     //       <ToastContainer autoClose={2000} />
     //     </div>
     //   );

@@ -1,8 +1,10 @@
-const Button = ({ page, onChange }) => {
+const Button = ({ photos, page, onChange }) => {
   return (
-    <button type="submit" onClick={() => onChange(page)}>
-      Load more
-    </button>
+    photos && (
+      <button type="submit" onClick={() => onChange(page)}>
+        Load more
+      </button>
+    )
   );
 };
 export default Button;

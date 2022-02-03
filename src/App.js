@@ -8,16 +8,17 @@ import Button from "./components/Button";
 
 export default class App extends Component {
   state = {
-    imagePhoto: "",
+    photos: "",
     id: "",
     largeImageUrl: "",
     page: 1,
     error: null,
     loading: false,
+    // status: "idle",
   };
   componentDidUpdate(_, prevState) {
     if (this.state.name !== prevState.name) {
-      this.setState({ loading: true });
+      this.setState({ loading: true, photos: "" });
       fetch(
         `https://pixabay.com/api/?q=${this.state.name}&page=${this.state.page}&key=24384103-764a450d164e25b7c6f60e4ce&image_type=photo&orientation=horizontal&per_page=12`
       )
@@ -26,12 +27,7 @@ export default class App extends Component {
             return response.json();
           }
         })
-        // .then(() => {
-        //   this.setState((prevState) => {
-        //     return { page: prevState.page + 1 };
-        //   });
-        // });
-        .then((imagePhoto) => this.setState({ imagePhoto }))
+        .then((photos) => this.setState({ photos }))
         .catch((error) => this.setState({ error }))
         .finally(() => this.setState({ loading: false }));
     }
@@ -46,8 +42,9 @@ export default class App extends Component {
   };
 
   render() {
-    console.log(this.state.page);
-    const { imagePhoto, page, loading, error } = this.state;
+    // console.log(this.state.page);
+    // const { imagePhoto, page, error, status } = this.state;
+    const { photos, page, loading, error } = this.state;
     return (
       <div className={css.app}>
         <SearchBar onSubmit={this.handleFormSubmit} />
@@ -55,12 +52,43 @@ export default class App extends Component {
           {error && <h2>Картинок с таким именем нет</h2>}
           {loading && <h2>Загружаем...</h2>}
           <ImageGallery>
-            <ImageGalleryItem renderPhotos={imagePhoto} />
+            <ImageGalleryItem renderPhotos={photos} />
           </ImageGallery>
         </div>
-        {imagePhoto && <Button page={page} onChange={this.handleChangePage} />}
+        {photos && (
+          <Button
+            page={page}
+            onChange={this.handleChangePage}
+            photos={photos}
+          />
+        )}
         <ToastContainer autoClose={2000} />
       </div>
     );
+
+    // if (status === "idle") {
+    //   return (
+    //     <div className={css.app}>
+    //       <SearchBar onSubmit={this.handleFormSubmit} />
+    //     </div>
+    //   );
+    // }
+    // if (status === "pending") {
+    //   return <h2>Загружаем...</h2>;
+    // }
+    // if (status === "rejected") {
+    //   return <h2>{error.message}</h2>;
+    // }
+    // if (status === "resolved") {
+    //   return (
+    //     <div className={css.gallery}>
+    //       <ImageGallery>
+    //         <ImageGalleryItem renderPhotos={imagePhoto} />
+    //       </ImageGallery>
+    //       <Button page={page} onChange={this.handleChangePage} />
+    //       <ToastContainer autoClose={2000} />
+    //     </div>
+    //   );
+    // }
   }
 }

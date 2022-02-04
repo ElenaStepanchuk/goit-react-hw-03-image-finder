@@ -31,9 +31,6 @@ export default class App extends Component {
         .catch((error) => this.setState({ error }))
         .finally(() => this.setState({ loading: false }));
     }
-    // if (this.state.photos.hits.total === 0) {
-    //   return <h2>Картинок с таким именем нет</h2>;
-    // }
   }
   handleFormSubmit = (name) => {
     this.setState({ name });
@@ -50,18 +47,16 @@ export default class App extends Component {
       .then((response) => {
         return response.json();
       })
-      // .then((photos) =>
-      //   this.setState((prevState) => {
-      //     return { photos: [...prevState.photos, photos] };
-      //   })
-      // )
       .then((photos) => this.setState({ photos }))
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }));
   };
 
   render() {
-    console.log(this.state.page);
+    // const renderPhotos = [...this.state.photos.hits];
+    console.log(this.state.photos);
+    // console.log(renderPhotos);
+    // console.log(renderPhotos);
     // const { photos, page, status } = this.state;
     const { photos, page, loading, error } = this.state;
     return (
@@ -84,36 +79,5 @@ export default class App extends Component {
         <ToastContainer autoClose={2000} />
       </div>
     );
-
-    // if (status === "idle") {
-    //   return (
-    //     <div className={css.app}>
-    //       <SearchBar onSubmit={this.handleFormSubmit} />
-    //     </div>
-    //   );
-    // }
-    // if (status === "pending") {
-    //   return <h2>Загружаем...</h2>;
-    // }
-    // if (status === "rejected") {
-    //   return <h2>Картинок с таким именем нет</h2>;
-    // }
-    // if (status === "resolved") {
-    //   return (
-    //     <div className={css.gallery}>
-    //       <ImageGallery>
-    //         <ImageGalleryItem renderPhotos={photos} />
-    //       </ImageGallery>
-    //       {photos && (
-    //         <Button
-    //           page={page}
-    //           onChange={this.handleChangePage}
-    //           photos={photos}
-    //         />
-    //       )}
-    //       <ToastContainer autoClose={2000} />
-    //     </div>
-    //   );
-    // }
   }
 }

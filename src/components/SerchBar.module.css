@@ -25,27 +25,20 @@
   border-radius: 3px;
   overflow: hidden;
 }
-
-.searchForm-button {
+.searchFormButton {
   display: inline-block;
   width: 48px;
   height: 48px;
   border: 0;
-  background-image: url("https://image.flaticon.com/icons/svg/149/149852.svg");
-  background-size: 40%;
-  background-repeat: no-repeat;
-  background-position: center;
   opacity: 0.6;
   transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   outline: none;
 }
-
-.searchForm-button:hover {
+.searchFormButton:hover {
   opacity: 1;
 }
-
-.searchForm-button-label {
+.searchFormButtonLabel {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -56,8 +49,7 @@
   clip-path: inset(50%);
   border: 0;
 }
-
-.searchForm-input {
+.searchFormInput {
   display: inline-block;
   width: 100%;
   font: inherit;
@@ -67,8 +59,7 @@
   padding-left: 4px;
   padding-right: 4px;
 }
-
-.searchForm-input::placeholder {
+.searchFormInput::placeholder {
   font: inherit;
   font-size: 18px;
 }

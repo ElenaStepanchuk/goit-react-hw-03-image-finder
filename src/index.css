@@ -18,6 +18,9 @@ body {
   background-color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url(./images/fon1.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 img {

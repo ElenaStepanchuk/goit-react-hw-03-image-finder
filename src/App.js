@@ -1,80 +1,102 @@
 import { Component } from "react";
 import css from "./App.module.css";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import SearchBar from "./components/SearchBar";
-import ImageGalleryItem from "./components/ImageGalleryItem";
+import FetchPhotos from "./helpers/FetchPhotos";
+import FetchPhotosAddMore from "./helpers/FetchPhotosAddMore";
 import ImageGallery from "./components/ImageGallery";
 import Button from "./components/Button";
-
+import Loader from "./components/Loader";
+import Modal from "./components/Modal";
 export default class App extends Component {
   state = {
-    photos: "",
+    photos: [],
     id: "",
-    largeImageUrl: "",
+    largeImageURL: "",
     page: 1,
     error: null,
     loading: false,
-    // status: "idle",
+    showModal: false,
   };
   componentDidUpdate(_, prevState) {
-    if (this.state.name !== prevState.name) {
-      this.setState({ loading: true, photos: "" });
-      fetch(
-        `https://pixabay.com/api/?q=${this.state.name}&page=${this.state.page}&key=24384103-764a450d164e25b7c6f60e4ce&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
-        })
-        .then((photos) => this.setState({ photos }))
-        .catch((error) => this.setState({ error }))
-        .finally(() => this.setState({ loading: false }));
+    const { name } = this.state;
+    const prevStateName = prevState.name;
+    const nextStateName = name;
+    if (nextStateName !== prevStateName) {
+      this.setState({ loading: true, photos: [] });
+      this.getPhotoFetch();
     }
   }
   handleFormSubmit = (name) => {
     this.setState({ name });
   };
+  getPhotoFetch = () => {
+    const { name, page } = this.state;
+    FetchPhotos(name, page)
+      .then((photos) => {
+        if (photos.hits.length === 0) {
+          toast(`фотографии или рисунка с именем не ${name} найдено!`, {
+            position: "top-center",
+          });
+        }
+        this.setState((prevState) => ({
+          photos: [...prevState.photos, ...photos.hits],
+        }));
+        this.scroll();
+      })
+      .catch((error) => this.setState({ error }))
+      .finally(() => this.setState({ loading: false }));
+  };
   handleChangePage = () => {
     this.setState((prevState) => {
       return { page: prevState.page + 1 };
     });
-    fetch(
-      `https://pixabay.com/api/?q=${this.state.name}&page=${
-        this.state.page + 1
-      }&key=24384103-764a450d164e25b7c6f60e4ce&image_type=photo&orientation=horizontal&per_page=12`
-    )
-      .then((response) => {
-        return response.json();
+    const { name, page } = this.state;
+    FetchPhotosAddMore(name, page)
+      .then((photos) => {
+        this.setState((prevState) => ({
+          photos: [...prevState.photos, ...photos.hits],
+        }));
+        this.scroll();
       })
-      .then((photos) => this.setState({ photos }))
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }));
   };
-
+  togleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+      largeImageURL: "",
+    }));
+  };
+  handleClickPhoto = (largeImageURL) => {
+    this.setState({ largeImageURL, showModal: true });
+  };
+  scroll = () => {
+    window.scrollBy({
+      top: 2000,
+      behavior: "smooth",
+    });
+  };
   render() {
-    // const renderPhotos = [...this.state.photos.hits];
-    console.log(this.state.photos);
-    // console.log(renderPhotos);
-    // console.log(renderPhotos);
-    // const { photos, page, status } = this.state;
-    const { photos, page, loading, error } = this.state;
+    const { photos, page, loading, showModal, largeImageURL } = this.state;
     return (
       <div className={css.app}>
         <SearchBar onSubmit={this.handleFormSubmit} />
         <div className={css.gallery}>
-          {error && <h2>Картинок с таким именем нет</h2>}
-          {loading && <h2>Загружаем...</h2>}
-          <ImageGallery>
-            <ImageGalleryItem renderPhotos={photos} />
-          </ImageGallery>
+          {loading && <Loader />}
+          <ImageGallery photos={photos} onPhotoClick={this.handleClickPhoto} />
         </div>
-        {photos && (
+        {photos.length > 0 && (
           <Button
             page={page}
             onChange={this.handleChangePage}
             photos={photos}
           />
+        )}
+        {showModal && (
+          <Modal onClose={this.togleModal}>
+            <img src={largeImageURL} alt="Увеличено текущее фото" />
+          </Modal>
         )}
         <ToastContainer autoClose={2000} />
       </div>

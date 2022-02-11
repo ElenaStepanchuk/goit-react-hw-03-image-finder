@@ -35,7 +35,7 @@ export default class App extends Component {
     FetchPhotos(name, page)
       .then((photos) => {
         if (photos.hits.length === 0) {
-          toast(`фотографии или рисунка с именем не ${name} найдено!`, {
+          toast(`фотографии или рисунка с именем ${name} не найдено!`, {
             position: "top-center",
           });
         }
